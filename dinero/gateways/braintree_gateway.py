@@ -549,7 +549,18 @@ class Braintree(Gateway):
             ret['number'] = 'X' * 12 + ret['last_4']
             # now it's in the form "XXXXXXXXXXXX1234"
 
-        return ret
+        cards = []
+        for card in customer_result.credit_cards:
+            cards.append({
+                'customer_id': ret['customer_id'],
+                'name': card.cardholder_name,
+                'last_4': card.last_4,
+                'number': 'X' * 12 + card.last_4,
+                'expiration_date': card.expiration_date,
+                'credit_card_token': card.token,
+            })
+
+        return ret, cards
 
     def _create_all_from_dict(self, options):
         customer = {}
